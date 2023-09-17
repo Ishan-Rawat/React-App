@@ -1,0 +1,12 @@
+Many a times in our project we will encounter logic that is used at many places. For example, here in our application we are cycling through a list 
+of blogs in the Home component to display the list of blogs. Now, there are many places where we may have to display a similar list of blogs,
+for example on the categories page, search page etc.
+
+Now, it is not feasable to write the same logic again and again at all these different places. So what we can do is that we can turn this repeating logic into a component of its own.
+We can then insert this component at all the different places this repeating logic appears.
+
+But, what about the data that is supplied to this component. For example we use the blog list component in 3 components: Home page, search page, and categories page.
+We wont be supplying the same list to this page that we supllied in the home page, cuz in the categories page we only want the blogs of a specific category,
+and on the search page we only want the blogs that contain a certain keyword. Thus we have to supply different data to these components at different places.
+
+This is where PROPS come in. Props allow us to pass data from parent component to child component.

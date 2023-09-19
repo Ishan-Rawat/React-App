@@ -8,9 +8,17 @@ const Home = () => {
         { title: 'Welcome party!', body: 'lorem ipsum...', author: 'yoshi', id: 2 },
         { title: 'Web dev top tips', body: 'lorem ipsum...', author: 'mario', id: 3 }
     ]);
+
+    const handleDelete = (id) => {
+
+    }
+    //Creating the handle delete function in this component now.
+
     return ( 
         <div className="home">
-            <BlogList blogs={blogs} title={ "All blogs"}/>
+            <BlogList blogs={blogs} title={ "All blogs"} handleDelete={handleDelete}/>
+            {//passing the handledelete function as a prop
+            }
             <BlogList blogs={blogs.filter((blog) => blog.author === 'mario')} title={"Mario's blogs"}/>
         </div>
      );

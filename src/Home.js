@@ -15,14 +15,27 @@ const Home = () => {
         const newBlogs = blogs.filter(blog => blog.id !== id);
         setBlogs(newBlogs);
     }
-    /**The useEffect hook is often used to fetch data, this is because it runs once when the page is first rendered, which is a good time to fetch data
-     * Usually we would be fetching data from a database using an API endpoint instead of hard-coding it like we have here, but that is too much work away from React for this tutorial
-     * So we will be using a package called JSON server. It allows us to create a fake REST API using only a JSON file.
-     * We will be creating a directory called data in our project and create a JSON file in it called db.json
-     * In the JSON file we will have a top level property called Blogs which will have an array of blogs as its value.
-     * In JSON server each top level element is called a resource, and it provides API endpoints that allow us to interact with the resource and 
-     * perform actions such as insert, delete, update, retrieve, etc.
-     * In our case we only have one top level element, i.e., "blogs". 
+    /**
+     * Now, after creating the data/db.json file we can either install the JSON server package locally and then run it so that it cam watch the db.json file and create endpoints for it
+     * OR
+     * we can run it with npx just like we did when we used create-react-app and have it watch the db.json file that way.
+     * We are going to go with the latter approach.
+     * For this, in a new terminal we will run:
+     * npx json-server --watch data/db.json --port 8000
+     * 
+     * When we run this in the terminal it will return us an endpoint for our resource (something like: http://localhost:8000/blogs)
+     * Then, we can send requests to this endpoint (such as a get request to fetch all the data)
+     * 
+     * The endpoints we will be using:
+     *  +-------------+--------------+---------------------+
+        | URL         | request type | function            |
+        +-------------+--------------+---------------------+
+        | /blogs      | get          | fetch all blogs     |
+        | /blogs/{id} | get          | fetch a single blog |
+        | /blogs      | post         | add a new blog      |
+        | /blogs/{id} | delete       | delete a blog       |
+        +-------------+--------------+---------------------+
+
      */
     useEffect(() => {
         console.log("use effect demo")

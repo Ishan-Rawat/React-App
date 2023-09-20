@@ -5,12 +5,14 @@ const Home = () => {
     
     const [blogs, setBlogs] = useState(null);
     const [isPending, setIsPending] = useState(true);
-    //Right now we are not handling any errors during the fetch process. So in case there is a network error or something the user will just wait indefinitely without any knowledge.
-    //So lets create a catch block that just logs out the error 
+    
     
     useEffect(() => {
-        fetch('http://localhost:8000/blogs')
+        fetch('http://localhost:8000/blogss') //intentionally mispspelling the endpoint so that the server returns an error
             .then(res => {
+                if(!res.ok){
+                    throw Error ('could not fetch data for this resource');
+                }
                 return res.json();
             })
             .then(data => {
@@ -18,6 +20,12 @@ const Home = () => {
                 setIsPending(false);
             })
             .catch(err => console.log(err))
+            /**But even this is not good enough. It works for connection errors where the request doesnt even reach the server, 
+             * but what about the cases where we do get a response back from the server and the response object specifies some other kind of error.
+             * To handle cases like this we will utilize the .ok property of the response object. If we get a response succesfully for the resource we requested, it is set to to true otherwise it is false
+             * So we will check for this property at the start of the .then() method in the fetch block.
+             * If it is false then we will throw an error, which will be caught by the catch block at the end and we will be able to display to the user of something is wrong.
+             */
     },[])
 
     return ( 

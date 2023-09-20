@@ -3,8 +3,7 @@ import BlogList from './BlogList';
 
 const Home = () => {
     
-    const [blogs, setBlogs] = useState(null); // we are going to initialise the blog list with null to start with, and then after fetching the data 
-    //we will use the setBlogs method to store the blogs in the blogs variable
+    const [blogs, setBlogs] = useState(null);
    
     const [name, setName] = useState('mario');
     
@@ -14,26 +13,33 @@ const Home = () => {
     }
     
     useEffect(() => {
-        //do note that we CANNOT use ASYNC and AWAIT here. We can exteranlise a function with this logic and make that async, but we wont do that here
         fetch('http://localhost:8000/blogs')
             .then(res => {
                 return res.json();
-                //here we are taking the response object as the argument and using the .json() method to parse the JSON data into a form that we can use and we are returning it
-                //The process of parsing the JSON data is also asynchronous as it takes some time, so this .then() also returns a promise
-                //Thus we tack on another .then mehtod to it. 
             })
             .then(data => {
                 setBlogs(data);
-                //here we use the setBlogs() method to change the state so that it contains the blogs
-                //Also note here that we are avoiding the infinite loop of useState changing the state which in turn triggering useState to update the state again and so on,
-                //by using an empty dependency list at the end
             })
 
     },[])
 
     return ( 
         <div className="home">
-            <BlogList blogs={blogs} title={ "All blogs"} handleDelete={handleDelete}/>
+            {/**When we ran the code of the previous commit we got the error: cannot map null
+             * This is because, remember that we are passign the list of blogs as a prop and runnign the map function on the list in the Bloglist component
+             * For a few milliseconds when the fetch method has not updated the state with the blogs it has fetched, the blog list consists of Null (that we initialised it with)
+             * Which gets sent as a prop to the bloglist component, and this leads to the above mentioned error.
+             * 
+             * To fix this, we will perform dynamic checking and wait till we get a value for blogs and then only output the BlogList component
+             * We do this in the following manner: (notice that the BlogList component has been enclosed within curly braces)
+             */}
+            {blogs && <BlogList blogs={blogs} title={ "All blogs"} handleDelete={handleDelete}/>}
+            {/**After this change it starts working, but why?
+             * What we are doing here is called conditional templating
+             * In the expression we have created using the && operator the LHS is evaluated first and if it evaluates to false then it just ignores the RHS, thus nothing is outputed
+             * In the start when blogs is null, null evalutes to false in JS, thus the RHS is ignored
+             * But when the state updates and blogs is no longer null, the RHS is evaluated and outputted.
+             */}
             <button onClick={() => setName('Solid snake')}>change name</button>
             <p>{name}</p>
         </div>

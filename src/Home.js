@@ -3,11 +3,8 @@ import BlogList from './BlogList';
 
 const Home = () => {
     
-    const [blogs, setBlogs] = useState([
-        { title: 'My new website', body: 'lorem ipsum...', author: 'mario', id: 1 },
-        { title: 'Welcome party!', body: 'lorem ipsum...', author: 'yoshi', id: 2 },
-        { title: 'Web dev top tips', body: 'lorem ipsum...', author: 'mario', id: 3 }
-    ]);
+    const [blogs, setBlogs] = useState(null); // we are going to initialise the blog list with null to start with, and then after fetching the data 
+    //we will use the setBlogs method to store the blogs in the blogs variable
    
     const [name, setName] = useState('mario');
     
@@ -15,31 +12,24 @@ const Home = () => {
         const newBlogs = blogs.filter(blog => blog.id !== id);
         setBlogs(newBlogs);
     }
-    /**
-     * Now, after creating the data/db.json file we can either install the JSON server package locally and then run it so that it cam watch the db.json file and create endpoints for it
-     * OR
-     * we can run it with npx just like we did when we used create-react-app and have it watch the db.json file that way.
-     * We are going to go with the latter approach.
-     * For this, in a new terminal we will run:
-     * npx json-server --watch data/db.json --port 8000
-     * 
-     * When we run this in the terminal it will return us an endpoint for our resource (something like: http://localhost:8000/blogs)
-     * Then, we can send requests to this endpoint (such as a get request to fetch all the data)
-     * 
-     * The endpoints we will be using:
-     *  +-------------+--------------+---------------------+
-        | URL         | request type | function            |
-        +-------------+--------------+---------------------+
-        | /blogs      | get          | fetch all blogs     |
-        | /blogs/{id} | get          | fetch a single blog |
-        | /blogs      | post         | add a new blog      |
-        | /blogs/{id} | delete       | delete a blog       |
-        +-------------+--------------+---------------------+
-
-     */
+    
     useEffect(() => {
-        console.log("use effect demo")
-    },[name])
+        //do note that we CANNOT use ASYNC and AWAIT here. We can exteranlise a function with this logic and make that async, but we wont do that here
+        fetch('http://localhost:8000/blogs')
+            .then(res => {
+                return res.json();
+                //here we are taking the response object as the argument and using the .json() method to parse the JSON data into a form that we can use and we are returning it
+                //The process of parsing the JSON data is also asynchronous as it takes some time, so this .then() also returns a promise
+                //Thus we tack on another .then mehtod to it. 
+            })
+            .then(data => {
+                setBlogs(data);
+                //here we use the setBlogs() method to change the state so that it contains the blogs
+                //Also note here that we are avoiding the infinite loop of useState changing the state which in turn triggering useState to update the state again and so on,
+                //by using an empty dependency list at the end
+            })
+
+    },[])
 
     return ( 
         <div className="home">

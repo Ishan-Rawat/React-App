@@ -5,10 +5,14 @@ const Home = () => {
     
     const [blogs, setBlogs] = useState(null);
     const [isPending, setIsPending] = useState(true);
+    /**Currently we are only outputing the error in the console. Now lets make it visible to the user
+     * For this lets add a value to the state that is set to the error message when we catch an error and then we can use conditional templating to display an error message to the page when there is one.
+     */
     
-    
+    const [error, setError] = useState(null);
+
     useEffect(() => {
-        fetch('http://localhost:8000/blogss') //intentionally mispspelling the endpoint so that the server returns an error
+        fetch('http://localhost:8000/blogs') 
             .then(res => {
                 if(!res.ok){
                     throw Error ('could not fetch data for this resource');
@@ -18,18 +22,19 @@ const Home = () => {
             .then(data => {
                 setBlogs(data);
                 setIsPending(false);
+                setError(null); //If upon a subsequent request we do get the data(without hitting reload) then the error message doesnt disappear on its own
+                //Thus we have to set Error to null here once we succesfully fetch data
             })
-            .catch(err => console.log(err))
-            /**But even this is not good enough. It works for connection errors where the request doesnt even reach the server, 
-             * but what about the cases where we do get a response back from the server and the response object specifies some other kind of error.
-             * To handle cases like this we will utilize the .ok property of the response object. If we get a response succesfully for the resource we requested, it is set to to true otherwise it is false
-             * So we will check for this property at the start of the .then() method in the fetch block.
-             * If it is false then we will throw an error, which will be caught by the catch block at the end and we will be able to display to the user of something is wrong.
-             */
+            .catch(err => {
+                setError(err.message);
+                setIsPending(false); //we dont want to keep seeing "Loading" when there is an error
+            })
+            
     },[])
 
     return ( 
         <div className="home">
+            {error && <div>{error}</div>}
             {isPending && <div>Loading ...</div>}
             {blogs && <BlogList blogs={blogs} title={ "All blogs"} />}
         </div>
